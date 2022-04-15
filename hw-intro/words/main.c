@@ -46,6 +46,16 @@ WordCount *word_counts = NULL;
  */
 int num_words(FILE* infile) {
   int num_words = 0;
+  int c;
+  if (infile == NULL) {
+    fprintf(stderr, "File does not exist! Please input correct directory path.\n");
+    exit(61);
+  }
+  while ((c = fgetc(infile)) != EOF){
+    if (!isalpha(c)){
+      num_words += 1;
+    }
+  }
 
   return num_words;
 }
@@ -64,6 +74,9 @@ void count_words(WordCount **wclist, FILE *infile) {
  * Useful function: strcmp().
  */
 static bool wordcount_less(const WordCount *wc1, const WordCount *wc2) {
+  if (wc1->count > wc2->count){
+    return 1;
+  }
   return 0;
 }
 
@@ -128,6 +141,14 @@ int main (int argc, char *argv[]) {
     // No input file specified, instead, read from STDIN instead.
     infile = stdin;
   } else {
+    printf("File name is %s\n", argv[optind]);
+    FILE *fptr = fopen(argv[optind], "r");
+    if (fptr == NULL) {
+      fprintf(stderr, "File does not exist! Please input correct directory path.\n");
+      exit(61);
+    }
+    total_words = num_words(fptr);
+    fclose(fptr);
     // At least one file specified. Useful functions: fopen(), fclose().
     // The first file can be found at argv[optind]. The last file can be
     // found at argv[argc-1].
